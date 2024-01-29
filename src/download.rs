@@ -47,7 +47,7 @@ pub async fn run(dialogue: &Dialogue) -> anyhow::Result<()> {
                 Err(e) => {
                     tracing::error!("download error:{}", e);
                     let mut download_error_json = download_error_json.lock().unwrap();
-                    
+
                     download_error_json.borrow_mut().push(json!({
                         "path": path,
                         "error": e.to_string()
@@ -57,7 +57,13 @@ pub async fn run(dialogue: &Dialogue) -> anyhow::Result<()> {
 
             Ok::<(), anyhow::Error>(())
         });
-        res.await??;
+        let res = res.await?;
+        match res {
+            Err(e) => {
+                tracing::info!("other error: {e}")
+            }
+            Ok(_) => {}
+        }
     }
     let err_data = download_error_json.lock().unwrap();
     let error_data: Value = serde_json::from_value(json!(*err_data))?;
