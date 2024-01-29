@@ -29,6 +29,10 @@ pub async fn run(dialogue: &Dialogue) -> anyhow::Result<()> {
         let path = item["path"].as_str().unwrap().to_string();
         let download_error_json = download_error_json.clone();
         let res = tokio::spawn(async move {
+            let exist = tokio::fs::metadata(&path).await;
+            if exist.is_ok() {
+                return Ok(());
+            }
             let svg_url = format!(
                 "https://lf-scm-us.larksuitecdn.com/whiteboard_icon_source/{}",
                 path
