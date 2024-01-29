@@ -29,16 +29,20 @@ pub async fn run(dialogue: &Dialogue) -> anyhow::Result<()> {
         let path = item["path"].as_str().unwrap().to_string();
         let download_error_json = download_error_json.clone();
         let res = tokio::spawn(async move {
-            let exist = tokio::fs::metadata(&path).await;
+            let file_name = path.split("/").last().unwrap();
+            let file_path = download_dir.join(file_name);
+
+            let exist = tokio::fs::metadata(&file_path).await;
             if exist.is_ok() {
+                tracing::info!("{} exist", path);
                 return Ok(());
             }
+
             let svg_url = format!(
                 "https://lf-scm-us.larksuitecdn.com/whiteboard_icon_source/{}",
                 path
             );
-            let file_name = path.split("/").last().unwrap();
-            let file_path = download_dir.join(file_name);
+
             let svg = reqwest::get(&svg_url).await;
             match svg {
                 Ok(svg) => {
