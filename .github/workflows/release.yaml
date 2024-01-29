@@ -68,17 +68,17 @@ jobs:
           override: true
           target: ${{ matrix.target }}
       - name: Build Binary
-        run: cargo build --release --target ${{ matrix.target }}
+        run: cargo build --release
       - name: Build archive
         shell: bash
         run: |
           mkdir archive
           cd archive
           if [ "${{ matrix.build }}" = "windows" ]; then
-            cp "../target/${{ matrix.target }}/release/${{ env.APP_NAME }}.exe" ./
+            cp "../target/release/${{ env.APP_NAME }}.exe" ./
             7z a "${{ env.APP_NAME }}-${{ matrix.build }}${{ matrix.ext }}" ${{ env.APP_NAME }}.exe
           else
-            cp "../target/${{ matrix.target }}/release/${{ env.APP_NAME }}" ./
+            cp "../target/release/${{ env.APP_NAME }}" ./
             tar -czf "${{ env.APP_NAME }}-${{ matrix.build }}${{ matrix.ext }}" ${{ env.APP_NAME }}
           fi
       - name: Upload archive
