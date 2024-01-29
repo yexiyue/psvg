@@ -66,7 +66,7 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
-target: ${{ matrix.target }}
+          target: ${{ matrix.target }}
       - name: Build Binary
         run: cargo build --release --target ${{ matrix.target }}
       - name: Build archive
@@ -103,3 +103,4 @@ target: ${{ matrix.target }}
                 name: `${process.env.name }`,
                 data: fs.readFileSync(`./archive/${process.env.name}`)
               });
+            
